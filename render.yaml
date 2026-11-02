@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: read-my-mind
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
