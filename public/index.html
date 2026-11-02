@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Read My Mind</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1c1b22;--mute:#6b6a75;--line:#e2dfd6;--acc:#5b4bdb;--acc2:#ff6b4a;--ok:#1f9d63;--miss:#d9d5ea;--cell:#efece4;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14131a;--card:#1e1d27;--ink:#f0eef8;--mute:#9a98a8;--line:#2e2c3a;--acc:#8d80ff;--acc2:#ff8566;--ok:#3ddc97;--miss:#34314a;--cell:#272535}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#14131a;--card:#1e1d27;--ink:#f0eef8;--mute:#9a98a8;--line:#2e2c3a;--acc:#8d80ff;--acc2:#ff8566;--ok:#3ddc97;--miss:#34314a;--cell:#272535}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+main{max-width:520px;margin:0 auto;padding:20px 16px 40px}
+h1{margin:6px 0 2px;font-size:30px;letter-spacing:-.5px}
+.sub{color:var(--mute);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}
+label{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
+input,select{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+input.code{text-transform:uppercase;letter-spacing:6px;text-align:center;font-weight:700;font-size:20px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+button{font:inherit;font-weight:600;border:0;border-radius:12px;padding:12px 16px;cursor:pointer;background:var(--acc);color:#fff}
+button.alt{background:var(--cell);color:var(--ink)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.err{color:var(--acc2);min-height:1.3em;font-size:14px;margin:8px 0 0}
+.score{display:flex;gap:10px;margin-bottom:12px}
+.chip{flex:1;border:2px solid var(--line);background:var(--card);border-radius:16px;padding:10px 12px}
+.chip.on{border-color:var(--acc)}
+.chip b{font-size:26px;display:block;line-height:1.1}
+.chip small{color:var(--mute)}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;background:var(--cell);margin-left:4px}
+.tag.p{background:var(--acc);color:#fff}
+.status{font-weight:600;margin:4px 0 12px;min-height:2.6em}
+#grid{display:grid;gap:4px;width:100%;max-width:480px;margin:0 auto}
+.c{aspect-ratio:1;border-radius:8px;border:0;padding:0;background:var(--cell);color:var(--ink);font-size:clamp(9px,3vw,18px);display:flex;align-items:center;justify-content:center;transition:transform .1s}
+.c:not(:disabled):hover{transform:scale(1.07);background:var(--miss)}
+.c.miss{background:var(--miss);color:var(--mute)}
+.c.sel{background:var(--acc);color:#fff}
+.c.tgt{background:var(--acc2);color:#fff}
+.c.dbl{background:var(--acc2);color:#fff;opacity:.75;font-weight:700}
+.c.found{background:var(--ok);color:#fff;opacity:.5}
+.c.hit{background:var(--ok);color:#fff;animation:pop .5s}
+@keyframes pop{50%{transform:scale(1.3)}}
+.big{font-size:44px;text-align:center;margin:0}
+.code-show{font-size:38px;letter-spacing:10px;font-weight:800;text-align:center;color:var(--acc);margin:6px 0}
+.mute{color:var(--mute);font-size:14px}
+.center{text-align:center}
+.hero{padding:10px 0 8px}.brand{display:flex;align-items:center;gap:10px}.brand-mark{display:grid;grid-template-columns:repeat(2,12px);gap:3px;padding:7px;border-radius:12px;background:var(--acc)}.brand-mark i{width:12px;height:12px;border-radius:4px;background:#fff}.brand-mark i:last-child{background:var(--acc2)}
+main{max-width:640px;padding-top:28px}h1{font-size:34px;letter-spacing:-1.2px}.sub{max-width:500px}.card{box-shadow:0 8px 25px #1713230a}.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.setup-grid .card{margin:0}.section-title{display:flex;align-items:center;gap:9px;font-size:17px}.section-title span{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:var(--cell)}
+button{transition:transform .12s,filter .12s}button:not(:disabled):hover{filter:brightness(1.06);transform:translateY(-1px)}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid color-mix(in srgb,var(--acc) 45%,transparent);outline-offset:2px}
+.game-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 12px}.room-pill{background:var(--cell);border-radius:999px;padding:7px 12px;font-size:13px}.share-btn{padding:8px 12px;font-size:13px}.score{gap:12px}.chip{padding:14px 16px}.chip b{font-size:30px}.status{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;min-height:auto}.timer{height:7px;background:var(--cell);border-radius:99px;overflow:hidden;margin:-2px 0 14px}.timer i{display:block;height:100%;background:var(--acc2);transition:width .3s linear}.hint{border-radius:12px;background:color-mix(in srgb,var(--acc) 11%,var(--card));color:var(--acc);padding:10px 12px;margin:10px 0;font-size:14px}.lobby-share{display:flex;gap:8px;max-width:360px;margin:12px auto 0}.lobby-share button{flex:1}
+@media(max-width:480px){.setup-grid{grid-template-columns:1fr}.hero{padding-top:4px}main{padding-left:13px;padding-right:13px}.card{padding:15px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="hero"><div class="brand"><div class="brand-mark"><i></i><i></i><i></i><i></i></div><div><h1>Read My Mind</h1><p class="sub">One hides. One guesses. Every miss earns points; an adjacent miss earns double.</p></div></div></div>
+  <div id="app"><div class="card center mute">Connecting…</div></div>
+</main>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+let db=false, S=null, me=null, code=null, sel=null, msg="";
+const socket=io();
+const pid=(()=>{const r=Math.random().toString(36).slice(2,10);try{let v=sessionStorage.getItem("pid");if(!v){v=r;sessionStorage.setItem("pid",v)}return v}catch(e){return r}})();
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const other=k=>k==="A"?"B":"A";
+const plotterOf=()=>S.turn%2===0?"A":"B";
+const nm=k=>S[k]?S[k].name:"Waiting…";
+socket.on("connect",()=>{
+  db=true;
+  if(!code)code=sessionStorage.getItem("roomCode")||new URLSearchParams(location.search).get("room")?.toUpperCase()||null;
+  if(code) socket.emit("join",{code,pid,name:""});
+  else ["create","join"].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false;const e=$("#err");if(e)e.textContent="";});
+});
+socket.on("disconnect",()=>{db=false;if(S){msg="Connection lost. Reconnecting…";render();}});
+socket.on("state",d=>{code=d.code;sessionStorage.setItem("roomCode",code);me=d.seat;if(S&&S.phase!==d.s.phase)sel=null;S=d.s;msg="";render();});
+socket.on("err",m=>{msg=m;if(!S&&code){sessionStorage.removeItem("roomCode");code=null;}S?render():home();});
+home();
+
+function home(){
+  const sizes=[...Array(13)].map((_,i)=>i+3).map(n=>`<option value="${n}" ${n===5?"selected":""}>${n} × ${n}</option>`).join("");
+  $("#app").innerHTML=`
+  <div class="setup-grid"><div class="card"><div class="section-title"><span>✦</span><b>Create a room</b></div><label>Your name</label><input id="name" maxlength="14" placeholder="e.g. Vaibhav">
+    <label>Grid size</label><select id="size">${sizes}</select><label>Mode</label><select id="mode"><option value="single">Single turn: hider hides once, guesser keeps guessing until caught</option><option value="continuous">Continuous: hider re-hides after every wrong guess</option><option value="swap">One by one: roles swap after every single guess</option></select>
+    <label>Turn timer</label><select id="timer"><option value="0" selected>Off</option><option value="30">30 seconds</option><option value="60">60 seconds</option><option value="90">90 seconds</option></select><p class="mute">If time runs out, the game makes a random move.</p>
+    <p></p><button id="create" style="width:100%" ${db?"":"disabled"}>Create room</button></div>
+  <div class="card"><div class="section-title"><span>↗</span><b>Join a room</b></div><label>Your name</label><input id="name" maxlength="14" placeholder="e.g. Vaibhav"><label>Room code</label>
+    <input id="code" class="code" maxlength="4" placeholder="ABCD">
+    <p></p><button id="join" class="alt" style="width:100%" ${db?"":"disabled"}>Join room</button></div></div>
+  <div class="err" id="err">${esc(msg||(db?"":"Connecting to server… the first load can take up to a minute."))}</div>`;
+  $("#create").onclick=create; $("#join").onclick=()=>join($("#code").value.trim().toUpperCase());
+}
+
+function create(){ socket.emit("create",{pid,name:$("#name").value,size:+$("#size").value,mode:$("#mode").value,timer:+$("#timer").value}); }
+function join(c){ if(c.length!==4){msg="Enter the 4-letter code.";return home();} code=c;sessionStorage.setItem("roomCode",c);socket.emit("join",{pid,code:c,name:$("#name").value}); }
+async function copyRoom(){const url=new URL(location.href);url.searchParams.set("room",code);try{await navigator.clipboard.writeText(url.toString());msg="Invite link copied!";}catch(e){msg="Room code: "+code;}render();}
+
+function used(){ return [...S.missAll,...S.hitAll]; }
+const ML={single:"Single turn",continuous:"Continuous",swap:"One by one"};
+const mode=()=>S.mode||"single";
+const banned=i=>mode()==="continuous"&&S.phase==="plot"&&S.prev===i&&S.size*S.size-used().length>1;
+function onCell(i){
+  if(!S||used().includes(i)||banned(i))return;
+  const p=plotterOf();
+  if(S.phase==="plot"&&me===p){ sel=i; render(); }
+  else if(S.phase==="guess"&&me!==p) socket.emit("guess",i);
+}
+function lockIn(){ if(sel!=null)socket.emit("plot",sel); sel=null; }
+function next(){ socket.emit("next"); }
+function again(){ socket.emit("again"); }
+
+function render(){
+  if(!S){ return home(); }
+  const p=plotterOf(), isP=me===p, n=S.size, cells=n*n, U=used(), left=cells-U.length;
+  const chip=k=>`<div class="chip ${S.phase!=="over"&&p===k&&S.B?"on":""}"><small>${esc(nm(k))}${k===me?" (you)":""}${S.B&&S.phase!=="over"?`<span class="tag ${p===k?"p":""}">${p===k?"Hider":"Guesser"}</span>`:""}</small><b>${S.scores[k]}</b></div>`;
+  let status="", btn="";
+  if(S.phase==="lobby"){
+    status=`<div class="card center"><div class="mute">Your friend can join with this code</div><div class="code-show">${code}</div><div class="lobby-share"><button id="copy" class="alt">Copy invite link</button><button id="copycode" class="alt">Copy code</button></div><div class="mute" style="margin-top:12px">Waiting for them to join…</div></div>`;
+  } else if(S.phase==="plot"){
+    const pre=S.note&&mode()!=="single"?`<span style="color:var(--acc2)">${esc(S.note)}</span><br>`:"";
+    status=pre+(isP?(mode()==="continuous"&&S.rm?"Pick a different square, then lock it in.":"Pick your secret square, then lock it in."):`${esc(nm(p))} is picking a secret square…`);
+    if(isP)btn=`<button id="lock" ${sel==null?"disabled":""} style="width:100%;margin-top:14px">Lock in square</button>`;
+  } else if(S.phase==="guess"){
+    status=(isP?`${esc(nm(other(p)))} is hunting your square. `:`Find ${esc(nm(p))}’s square! `)+(mode()==="swap"?"One shot.":`Misses this turn: ${S.rm}.`)+(S.note?` <span style="color:var(--acc2)">${esc(S.note)}</span>`:"")+(S.hint&&!isP?`<div class="hint">${esc(S.hint)}</div>`:"");
+  } else if(S.phase==="reveal"){
+    status=`<span style="color:var(--ok)">Caught after ${S.rm} miss${S.rm===1?"":"es"}!</span> ${left?"Roles swap.":"The grid is full."}`;
+    btn=`<button id="next" style="width:100%;margin-top:14px">${left?"Next turn: swap roles":"See final result"}</button>`;
+  } else if(S.phase==="over"){
+    const a=S.scores.A,b=S.scores.B;
+    status=`<p class="big">🏆</p><div class="center"><b style="font-size:22px">${a===b?"It’s a tie!":esc(nm(a>b?"A":"B"))+" wins!"}</b></div>`;
+    btn=`<button id="again" style="width:100%;margin-top:14px">Rematch</button>`;
+  }
+  let grid="";
+  if(S.phase!=="lobby"&&S.phase!=="over"){
+    const canTap=(S.phase==="plot"&&isP)||(S.phase==="guess"&&!isP);
+    for(let i=0;i<cells;i++){
+      let cls="c",txt="",dis=!canTap||U.includes(i)||banned(i);
+      if(S.dbl.includes(i)){cls+=" miss dbl";txt="2×";}
+      else if(S.missAll.includes(i)){cls+=" miss";txt="✕";}
+      if(S.hitAll.includes(i)){cls+=i===S.target&&S.phase==="reveal"?" hit":" found";txt="★";}
+      else if(S.phase==="guess"&&isP&&i===S.target){cls+=" tgt";txt="★";}
+      else if(S.phase==="plot"&&isP&&i===sel){cls+=" sel";txt="★";}
+      grid+=`<button class="${cls}" data-i="${i}" ${dis?"disabled":""}>${txt}</button>`;
+    }
+    grid=`<div id="grid" style="grid-template-columns:repeat(${n},1fr)">${grid}</div>`;
+  }
+  const secs=S.deadline?Math.max(0,Math.ceil((S.deadline-Date.now())/1000)):null, pct=secs==null?0:Math.max(0,Math.min(100,secs/(S.timer||60)*100));
+  $("#app").innerHTML=`<div class="game-top"><div class="room-pill">Room <b>${code}</b> · ${n}×${n} · ${ML[mode()]} · ${left} left</div><button id="share" class="alt share-btn">Share</button></div>
+  ${S.B?`<div class="score">${chip("A")}${chip("B")}</div>`:""}
+  ${S.phase==="lobby"?status:`<div class="status">${status}</div>`}${S.deadline?`<div class="timer" aria-label="${secs} seconds remaining"><i style="width:${pct}%"></i></div><div class="mute center" style="margin-top:-10px;margin-bottom:10px">${secs}s remaining</div>`:""}${grid}${btn}
+  <div class="err">${esc(msg)}</div>`;
+  const g=$("#grid"); if(g)g.onclick=e=>{const b=e.target.closest(".c");if(b&&!b.disabled)onCell(+b.dataset.i)};
+  const l=$("#lock"); if(l)l.onclick=lockIn;
+  const x=$("#next"); if(x)x.onclick=next;
+  const y=$("#again"); if(y)y.onclick=again;
+  const c=$("#copy");if(c)c.onclick=copyRoom;
+  const cc=$("#copycode");if(cc)cc.onclick=async()=>{try{await navigator.clipboard.writeText(code);msg="Room code copied!";}catch(e){msg="Room code: "+code;}render();};
+  const sh=$("#share");if(sh)sh.onclick=copyRoom;
+}
+setInterval(()=>{if(S&&S.deadline)render();},1000);
+</script>
+</body>
+</html>
